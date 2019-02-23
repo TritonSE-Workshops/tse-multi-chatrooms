@@ -24,7 +24,7 @@ class Channel extends Component {
       messages: [],
       heartbeat: null,
       heartbeat_timestamp: new Date(),
-      heartbeat_lock: false,
+      heartbeat_lock: true,
       form_message: ''
     }
 
@@ -37,23 +37,44 @@ class Channel extends Component {
   }
 
   componentDidMount() {
-    function fetch_messages(self) {
-      axios.get(`http://localhost:5000/api/messages?channel=${self.state.channel}&limit=${MESSAGE_LIMIT}`).then(res => {
-        let messages = res.data.data;
-        let heartbeat_id = setInterval(self.doHeartbeat, HEARTBEAT_INTERVAL);
-        self.setState({messages : messages, heartbeat : heartbeat_id, heartbeat_timestamp: new Date()});
-      }).catch(err => {
-        if (err.response.status === 404) {
-          axios.post("http://localhost:5000/api/channels", {
-            name: self.state.channel 
-          }).then(res => {
-            fetch_messages(self);    
-          });
-        }
-      });
-    }
-
-    fetch_messages(this); 
+    /*
+     * TODO:
+     *
+     * After we are done with an initial render, we want to use 
+     * axios to make a maximum of 2 calls to the backend server
+     * to retrieve and update some data. We'll walk through the different
+     * scenarios.
+     *
+     * 1) Let's say that the current channel (this.state.channel) has a 
+     * channel object already associated with it on the backend. We want
+     * to retrieve the {MESSAGE_LIMIT} most recent messages that the channel owns.
+     * That is, we want to issue:
+     *
+     * GET http://localhost:5000/api/messages?channel={CHANNEL}&limit=${LIMIT}
+     *
+     * You are going to use Axios to do this. Since the channel exists, you can 
+     * expect that the backend will return a list of messages in res.data.data
+     * where res is the response object that Axios returns. You will need to 
+     * save these messages to the state, and then create a 'heartbeat' polling
+     * function to continuously fetch new messages. Fortunately, this function has 
+     * already been written for you (self.doHeartbeat), so all there is left is to
+     * initialize the interval and then make the correct setState() call. NOTE: 
+     * you'll want to set four things during the state change ... messages,
+     * heartbeat, heartbeat_timestamp, heartbeat_lock.
+     *
+     * 2) Conversely, let's say that this channel is entirely new, such that when
+     * we make the GET call above, we get a 404, indicating that there is no channel
+     * object by the name of ${self.state.channel}. In this case, we need to make a POST
+     * request to the proper URL with the correct information (just the channel name). The
+     * structure of the request will look like this:
+     *
+     * POST http://localhost:5000/api/channels 
+     * with body = { name: self.state.channel }
+     *
+     * This should always return a success. You'll then need to redo #1 without the
+     * GET request, since you can assume for a newly created channel that the number of
+     * messages it has is 0 (therefore, the messages array will be empty).
+     */
   }
 
   doHeartbeat() {
