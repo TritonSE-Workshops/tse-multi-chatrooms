@@ -37,7 +37,7 @@ in HTTP packets.
 
 3. Change directory into the frontend folder, run `yarn install`
 
-4. Change directory into the backend folder, run `npm install`
+4. Change directory into the backend folder, run `yarn install`
 
 5. Make sure to set up the `MONGO_URI` environment variable in the frontend/.env file. 
 You will need to create this file. The URI has been provided in the slides. 
