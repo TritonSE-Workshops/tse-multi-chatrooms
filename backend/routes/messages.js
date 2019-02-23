@@ -32,20 +32,35 @@ router.get('/', function(req, res) {
         return;
       }
 
-      // Construct basic query: find all messages associated with a channel
-      let query = Message.find({ channel: channel._id });
+      /*
+       * TODO: 
+       *
+       * We want to initialize a query here, not have it be null!
+       *
+       * This query is going to fetch all messages associated with a channel.
+       * However, we need to account for some things. 
+       *
+       * 1. The results of the query should always be sorted in descending order
+       * based on each message's `created_at` field. This means that 
+       * the most recent message should appear first in the list.
+       *
+       * 2. If the after parameter is parameter in the request query string,
+       * we want to incorporate that into this query. The after parameter will
+       * be a Date formatted as an ISO string. If this parameter is present,
+       * this means that we only want messages with a value for `created_at`
+       * that is greater than the given date (in essence, the message was created
+       * after the 'after' date). 
+       *
+       * 3. We also want to incorporate a limit. See the 'limit' variable. This
+       * is guaranteed to be some integer.
+       *
+       * Important variables:
+       *  - channel
+       *  - req.query.after (remember this can be null too!)
+       *  - limit 
+       */
 
-      // Sometimes, we only want messages after a certain given date
-      if ('after' in req.query) {
-        let cutoff_date = new Date(req.query.after);
-        query = Message.find({ channel: channel._id, created_at: { "$gte" : cutoff_date } });
-      }
-
-      // Sort messages by date regardless
-      query = query.sort('-created_at');
-
-      // Limit number of messages we can get
-      query = query.limit(limit);
+      let query = null;
 
       query.exec((err, messages) => {
         if (err) {
