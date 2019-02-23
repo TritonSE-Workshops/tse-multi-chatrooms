@@ -10,13 +10,20 @@ const ChannelSchema = new Schema({
   message_count: Number 
 });
 
+/*
+ * TODO:
+ *
+ * This schema has a bad field!
+ *
+ * We want to modify the 'channel' field, which is 
+ * suppose to be a reference to a 
+ * Channel object. You might get inspiration from
+ * above ...
+ */
 const MessageSchema = new Schema({
   sender: String,
   content: String,
-  channel: {
-    type: Schema.Types.ObjectId,
-    ref: 'Channel'
-  },
+  channel: String, // This part seems a bit fishy ...
   created_at: Date 
 });
 
