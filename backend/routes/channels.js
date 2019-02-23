@@ -71,21 +71,16 @@ router.post('/', function (req, res) {
         return;
       }
 
-      // Channel does not exist, so we define a new instance of the channel model
-      var channel = new Channel({
-        name: name,
-        messages: [],
-        message_count: 0
-      });
+      /*
+       * TODO:
+       *
+       * We want to create a channel object, using the `name` variable.
+       * We then want to save this channel object, and send JSON indicating that
+       * a success has occurred (or send error 500 if we crash).
+       *
+       * Hint: see the completed POST method routes/messages.js for inspiration.
+       */
 
-      // Save the instance to our database
-      channel.save((err, channel) => {
-        if (err) {
-          res.status(500).json({ error: true, message: err.message });
-          return;
-        }
-        res.json({ success: true, data: channel });
-      });
     });
 });
 
