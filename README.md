@@ -1,68 +1,78 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# tse-react-chatrooms
 
-## Available Scripts
+This is a simple application that provides semi-realtime chatting functionality. 
+As a user, you set your name and then you are allowed to join and talk in any number of 
+channels. If you join a channel that does not exist already, it will be created for you.
+There are some caveats to this approach; we will go over them towards the end of the workshop. 
 
-In the project directory, you can run:
+## Your Job
 
-### `npm start`
+There are several `TODO`s scattered through the code. It will be your job to patch them
+using similar functionality to what has been written. The affected files are listed below.
+It is recommended that you attempt them in the given order; it will be harder to understanding
+how everything meshes together if you do them out-of-order.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+* backend/app.js 
+* backend/models.js 
+* backend/routes/channels.js 
+* backend/routes/messages.js 
+* frontend/index.js 
+* frontend/App.js 
+* frontend/components/home.js 
+* frontend/components/channel.js 
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+Hints: I would advise that you look through all of the files in the repository and not just the ones
+listed. Again, it will help you understand how everything works in tandem. Additionally,
+start with the backend first, and then move on to the frontend. The backend has 5 routes
+associated with it, each corresponding to a particular REST function. These have been detailed
+below in the REST API section. I also highly advise that you know the difference between
+`req.params`, `req.query`, and `req.body`. These all tie into fundamental structures
+in HTTP packets.
 
-### `npm test`
+## Installation
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. Clone this repository.
 
-### `npm run build`
+2. Switch to the `missing` branch for practice. Answers are in the `master` branch.
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. Change directory into the frontend folder, run `yarn install`
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+4. Change directory into the backend folder, run `npm install`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+5. Make sure to set up the `MONGO_URI` environment variable in the frontend/.env file. 
+You will need to create this file. The URI has been provided in the slides. 
 
-### `npm run eject`
+## Running
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Since there are two servers, you need to have at least two terminal windows open for
+this to work.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Open one window. Change directory into the frontend folder, run `npm start`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+2. Open another window. Change directory into the backend folder, run `npm start`.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## REST API
 
-## Learn More
+* __GET__ /api/channels?limit={LIMIT}: This will fetch a list of the most popular channel objects, limited
+  by the provided limit argument in the query string. The channel objects are sorted in descreasing order
+  by the number of messages in each, which determines their popularity (i.e. a channel with more messages
+  is more popular than a channel with fewer). The limit argument is technically optional and does not have
+  to be provided. 
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+* __GET__ /api/channels/{NAME}: This will fetch a single channel object, which contains the channel name
+  (redundant, of course) and the number of messages that the channel owns. Will return a 404 if no channel
+  matches the name that was provided.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+* __POST__ /api/channels: Using the arguments provided in `req.body`, this will create a channel. The
+  only argument required is `req.body.name`, which defines the name of the channel to be created. Will return
+  a 409 if a channel already exists with the given name. 
 
-### Code Splitting
+* __GET__ /api/messages?limit={LIMIT}&channel={NAME}&after={DATE}: The channel argument is required in the 
+  query string; the after and limit arguments are optional. This will return a list of the most recent
+  messages belonging to the given channel. The limit parameter limits the number of messages that are returned.
+  The after parameter sets a minimum date for messages; all returned messages must have a creation date
+  occurring AFTER the given date. Will return a 404 if no channel matches the name that was provided.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+* __POST__ /api/messages: Using the arguments provided in `req.body`, this will create a message to be added
+  to a channel. The arguments provided must be `req.body.channel` (the channel name), `req.body.sender`
+  (the sender name), and `req.body.content` (the content of the message).  
