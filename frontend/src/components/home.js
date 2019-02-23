@@ -37,14 +37,16 @@ class Home extends Component {
   }
 
   handleNameSubmit(event) {
-    // Clear the name input box
-    document.getElementById("name-form").reset();
-
-    localStorage.setItem("name", this.state.form_name);
-    this.setState({ name : this.state.form_name });
-
-    // Prevent the event from triggering an actual submission
-    event.preventDefault();
+    /*
+     * TODO: 
+     *
+     * We want to do four things here.
+     *
+     * 1) Clear the form with the id "name-form".
+     * 2) Set our name in the JS Local Storage to be this.state.form_name
+     * 3) Set this.state.name to be this.state.form_name
+     * 4) Prevent the event from triggering a GET submission
+     */
   }
 
   handleChannelChange(event) {
