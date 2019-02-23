@@ -5,22 +5,26 @@ class Home extends Component {
   constructor(props) {
     super(props);
 
-    let { cookies } = props;
-
+    // Set up initial state
     this.state = {
-      name: localStorage.getItem('name'),
+      name: localStorage.getItem('name'), // Name is pulled from the JS local storage 
       channels: [],
       form_name: '',
       form_channel: ''
     };
     
+    // Add bindings for changing the channel field
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleNameSubmit = this.handleNameSubmit.bind(this);
+
+    // Add bindings for changing the channel form
     this.handleChannelChange = this.handleChannelChange.bind(this);
     this.handleChannelSubmit = this.handleChannelSubmit.bind(this);
   }
 
   componentDidMount() {
+    // When the component mounts, we want to fetch the top 5 channels and
+    // then add them to our state, setting the channels array 
     axios.get("http://localhost:5000/api/channels?limit=5").then(res => {
       let channels = res.data.data;
       this.setState({channels : channels});
@@ -28,27 +32,34 @@ class Home extends Component {
   }
 
   handleNameChange(event) {
+    // We want to update our state's version of the name input field  
     this.setState({ form_name : event.target.value });
   }
 
   handleNameSubmit(event) {
+    // Clear the name input box
     document.getElementById("name-form").reset();
 
     localStorage.setItem("name", this.state.form_name);
     this.setState({ name : this.state.form_name });
 
+    // Prevent the event from triggering an actual submission
     event.preventDefault();
   }
 
   handleChannelChange(event) {
+    // We want to update our state's version of the channel input field  
     this.setState({ form_channel : event.target.value });
   }
 
   handleChannelSubmit(event) {
+    // Clear the channel input box
     document.getElementById("channel-form").reset();
 
+    // Navigate to /channel/{STORED_CHANNEL}
     this.props.history.push("/channel/" + this.state.form_channel);
 
+    // Prevent the event from triggering an actual submission
     event.preventDefault();
   }
 
@@ -57,7 +68,7 @@ class Home extends Component {
       <div className="container separation-large">
         <div className="row separation">
           <div className="twelve columns">
-            <h2>Multi-User Chatrooms</h2>
+            <h2>TSE Multi-User Chatrooms</h2>
             <p>This is a barebones implementation of a chatting application brought to you by Triton Software Engineering. Much like Slack or IRC, users pick an identifier (their name) and then can go to a channel to chat. All messages are persisted across each channel.</p>
           </div>  
         </div>
@@ -67,7 +78,7 @@ class Home extends Component {
             <p>{this.state.name != null ? "Your name is currently " + this.state.name + ", but you can always change it below." :  "You will need to enter your name and then click on a channel."}</p>
             <form onSubmit={this.handleNameSubmit} id="name-form">
               <label>Name: </label>
-              <input type="text" onChange={this.handleNameChange}/><br/>
+              <input type="text" className="u-full-width" onChange={this.handleNameChange}/><br/>
               <input type="submit" value="Submit"/>
             </form>
           </div>  
@@ -82,7 +93,7 @@ class Home extends Component {
             <p>None of these channels appeal to you? You can always enter in a channel by name.</p>
             <form onSubmit={this.handleChannelSubmit} id="channel-form">
               <label>Channel: </label>
-              <input type="text" onChange={this.handleChannelChange}/><br/>
+              <input type="text" className="u-full-width" onChange={this.handleChannelChange}/><br/>
               <input type="submit" value="Submit"/>
             </form>
           </div>  
