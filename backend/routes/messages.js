@@ -5,6 +5,13 @@ var mongoose = require('mongoose');
 var { Channel, Message } = require('../models');
 
 router.get('/', function(req, res) {
+  // Parse limit field, bad requests are just returned with 400's
+  let limit = parseInt(req.query.limit || '100', 10);
+  if (limit < 1 || limit > 1000) {
+    res.status(400).json({ error: true, message: 'Invalid limit.' });
+    return;
+  }
+
   // Always limit messages by channel 
   let channel_name = req.query.channel;
   if (channel_name == null) {
@@ -35,7 +42,10 @@ router.get('/', function(req, res) {
       }
 
       // Sort messages by date regardless
-      query = query.sort('created_at');
+      query = query.sort('-created_at');
+
+      // Limit number of messages we can get
+      query = query.limit(limit);
 
       query.exec((err, messages) => {
         if (err) {
@@ -80,7 +90,8 @@ router.post('/', function (req, res) {
       let message = new Message({
         sender: message_sender,
         content: message_content,
-        channel: channel._id
+        channel: channel._id,
+        created_at: Date.now() 
       });
 
       // Save the message into the database

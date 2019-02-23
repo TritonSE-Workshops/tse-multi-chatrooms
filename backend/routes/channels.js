@@ -7,7 +7,7 @@ var { Channel, Message } = require('../models');
 router.get('/', function(req, res) {
   // Parse limit field, bad requests are just returned with 400's
   let limit = parseInt(req.query.limit || '100', 10);
-  if (limit < 1 || limit > 100) {
+  if (limit < 1 || limit > 1000) {
     res.status(400).json({ error: true, message: 'Invalid limit.' });
     return;
   }
@@ -16,7 +16,7 @@ router.get('/', function(req, res) {
   Channel
     .find({})
     .select('-messages')
-    .sort('message_count')
+    .sort('-message_count')
     .limit(limit)
     .exec((err, channels) => {
       if (err) {

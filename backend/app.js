@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 var env = require('node-env-file');
+var cors = require('cors');
 
 // Load environment variables
 env(path.join(__dirname, '.env'));
@@ -14,6 +15,10 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true });
 
 // Initialize Express application
 var app = express();
+
+// Allow CORS
+app.use(cors());
+app.options('*', cors());
 
 // Set up view engine 
 app.set('views', path.join(__dirname, 'views'));
@@ -35,20 +40,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Setup API routes
 app.use('/api/channels', require('./routes/channels'));
 app.use('/api/messages', require('./routes/messages'));
-
-app.use(function(req, res, next) {
-  next(createError(404));
-});
-
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
 
 // Set the server port 
 app.set('port', (process.env.PORT || 5000));

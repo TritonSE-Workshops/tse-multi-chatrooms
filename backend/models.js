@@ -17,10 +17,7 @@ const MessageSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Channel'
   },
-  created_at: {
-    type: Date,
-    default: Date.now()
-  }
+  created_at: Date 
 });
 
 const Channel = mongoose.model('Channel', ChannelSchema);
