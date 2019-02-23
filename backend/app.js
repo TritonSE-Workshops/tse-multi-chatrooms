@@ -31,7 +31,7 @@ app.use(logger('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Allow for parsing of cookies
+// Allow for parsing of cookies (not used)
 app.use(cookieParser());
 
 // Set public directory for resources (not used)
@@ -39,7 +39,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Setup API routes
 app.use('/api/channels', require('./routes/channels'));
-app.use('/api/messages', require('./routes/messages'));
+/*
+ * TODO: Add a route for /api/messages
+ */
 
 // Set the server port 
 app.set('port', (process.env.PORT || 5000));
