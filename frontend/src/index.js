@@ -11,7 +11,10 @@ render(
   <BrowserRouter>
     <App/>
   </BrowserRouter>,
-  document.getElementById('root')
+  /*
+   * TODO: Where does React hook into index.html?
+   */
+  document.getElementById('SOMETHING SOMETHING SOMETHING')
 );
 
 // If you want your app to work offline and load faster, you can change
