@@ -6,9 +6,13 @@ import Channel from './components/channel';
 
 class App extends Component {
   render() {
+    /*
+     * TODO:
+     * We want to add a route for our home page! (i.e. a route with path = '/')
+     * Hint: this route will take in three parameters: path, exact, render
+     */
     return (
       <div>
-        <Route path="/" exact render={(props) => <Home {...props}/>}/>
         <Route path="/channel/:name" render={(props) => <Channel {...props}/>}/>
       </div>
     ); 
