@@ -1,0 +1,25 @@
+version: '3.0'
+
+services:
+  chatrooms-backend:
+    container_name: chatrooms-backend
+    build: backend 
+    ports:
+      - "5000:5000"
+    volumes:
+      - "./backend/src:/app/src"
+      - "./backend/public:/app/public"
+    environment:
+      - "ENV=DEV"
+  chatrooms-frontend:
+    container_name: chatrooms-frontend
+    build: frontend 
+    ports: 
+      - "80:80"
+    depends_on: 
+      - "chatrooms-backend"
+    volumes:
+      - "./frontend/src:/app/src"
+      - "./frontend/public:/app/public"
+    environment:
+      - "ENV=DEV"
