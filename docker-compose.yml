@@ -1,0 +1,16 @@
+version: '3.0'
+
+services:
+  chatrooms-backend:
+    container_name: chatrooms-backend
+    build: backend 
+    ports:
+      - "5000:5000"
+    volumes:
+      - "./backend/src:/app/src"
+      - "./backend/public:/app/public"
+    environment:
+      - "ENV=DEV"
+  
+# TODO: The chatrooms-backend container is done.
+# Now, add one for chatrooms-frontend. 
